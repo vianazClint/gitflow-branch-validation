@@ -17,4 +17,11 @@ jobs:
       with:
         branch-name: "${{ github.ref }}" # The current branch where the workflow is running.
         validation-logic: "equalTo('feature/#-*') && allLowerCase()"
-        fail-when-not-valid: true # Optional. Default is true. # Optional. Default is true.
+        fail-when-not-valid: false # Optional. Default is true. # Optional. Default is true.
+    - name: Fail Workflow # But this step will fail the workflow instead.
+      if: ${{ steps.validate-branch.outputs.valid-branch }} = 'false'
+      run: |
+          Write-Host "The branch is invalid!!";
+          Write-Host "The branch name is ${{ github.ref }}";
+          Write-Host "The validation logic is equalTo('feature/#-*') && allLowerCase()";
+          exit 1; # Fail the workflow
