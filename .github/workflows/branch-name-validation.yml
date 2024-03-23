@@ -21,7 +21,7 @@ jobs:
     - name: Fail Workflow # But this step will fail the workflow instead.
       if: ${{ steps.validate-branch.outputs.valid-branch }} = 'false'
       run: |
-          Write-Host "The branch is invalid!!";
-          Write-Host "The branch name is ${{ github.ref }}";
-          Write-Host "The validation logic is equalTo('feature/#-*') && allLowerCase()";
+          echo "The branch is invalid!!";
+          echo "The branch name is ${{ github.ref }}";
+          echo "The validation logic is equalTo('feature/#-*') && allLowerCase()";
           exit 1; # Fail the workflow
