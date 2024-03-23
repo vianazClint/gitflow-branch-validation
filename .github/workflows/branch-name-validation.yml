@@ -15,13 +15,13 @@ jobs:
     - name: Validate Branch
       uses: KinsonDigital/BranchValidator@v1.0.0-preview.4 # Make sure this is the latest version
       with:
-        branch-name: "${{ github.ref }}" # The current branch where the workflow is running.
+        branch-name: "${{ github.head_ref }}" # The current branch where the workflow is running.
         validation-logic: "equalTo('feature/#-*') && allLowerCase()"
         fail-when-not-valid: false # Optional. Default is true. # Optional. Default is true.
     - name: Fail Workflow # But this step will fail the workflow instead.
       if: ${{ steps.validate-branch.outputs.valid-branch }} = 'false'
       run: |
           echo "The branch is invalid!!";
-          echo "The branch name is ${{ github.ref }}";
+          echo "The branch name is ${{ github.head_ref }}";
           echo "The validation logic is equalTo('feature/#-*') && allLowerCase()";
           exit 1; # Fail the workflow
