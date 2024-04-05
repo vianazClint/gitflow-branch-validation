@@ -32,7 +32,7 @@ jobs:
           sleep 30s && echo "${{ matrix.packages }} test done"
     
   deploy-develop:
-    if: github.ref == 'refs/heads/develop'
+    if: ${{ github.event.pull_request.base.ref == 'develop' }}
     name: Deploy Develop
     needs: test
     environment:
@@ -50,7 +50,7 @@ jobs:
           sleep 30s && echo "${{ matrix.packages }} deploy done"
   
   deploy-staging:
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.event.pull_request.base.ref == 'main' }}
     name: Deploy Staging
     needs: test
     environment:
