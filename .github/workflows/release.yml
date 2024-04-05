@@ -32,10 +32,12 @@ jobs:
           sleep 30s && echo "${{ matrix.packages }} test done"
     
   deploy-production:
-    if: github.ref_name == 'refs/heads/main'
     name: Deploy Production
     needs: test
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://example.com
     strategy:
       matrix:
         packages: [backend, web, helper-web, service]
