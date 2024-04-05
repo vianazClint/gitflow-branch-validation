@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        packages: [backend, web, helper-web, service]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run:
+          sleep 30s && echo "${{ matrix.packages }} build done"
+  
+  test:
+    name: Test Unit
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        packages: [backend, web, helper-web, service]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test
+        run:
+          sleep 30s && echo "${{ matrix.packages }} test done"
+    
+  deploy-develop:
+    if: ${{ github.event.pull_request.base.ref == 'develop' }}
+    name: Deploy Develop
+    needs: test
+    environment:
+      name: develop
+      url: https://develop.example.com
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        packages: [backend, web, helper-web, service]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy
+        run:
+          sleep 30s && echo "${{ matrix.packages }} deploy done"
+  
+  deploy-staging:
+    if: ${{ github.event.pull_request.base.ref == 'main' }}
+    name: Deploy Staging
+    needs: test
+    environment:
+      name: staging
+      url: https://staging.example.com
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        packages: [backend, web, helper-web, service]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy
+        run:
+          sleep 30s && echo "${{ matrix.packages }} deploy done"
+  
+        
+            
+    
