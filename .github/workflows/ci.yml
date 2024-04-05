@@ -30,6 +30,43 @@ jobs:
       - name: Test
         run:
           sleep 30s && echo "${{ matrix.packages }} test done"
+    
+  deploy-develop:
+    if: github.ref == 'refs/heads/develop'
+    name: Deploy Develop
+    needs: test
+    environment:
+      name: develop
+      url: https://develop.example.com
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        packages: [backend, web, helper-web, service]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy
+        run:
+          sleep 30s && echo "${{ matrix.packages }} deploy done"
+  
+  deploy-staging:
+    if: github.ref == 'refs/heads/main'
+    name: Deploy Staging
+    needs: test
+    environment:
+      name: staging
+      url: https://staging.example.com
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        packages: [backend, web, helper-web, service]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy
+        run:
+          sleep 30s && echo "${{ matrix.packages }} deploy done"
+  
         
             
     
