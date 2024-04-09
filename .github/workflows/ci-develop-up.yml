@@ -51,6 +51,7 @@ jobs:
     name: Deploy PR
     needs: [build, test]
     strategy:
+      fail-fast: false
       matrix:
         app: [web, docs]
     runs-on: ubuntu-latest
