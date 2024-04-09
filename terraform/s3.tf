@@ -3,6 +3,7 @@ variable "access_key" {
 }
 variable "secret_key" {
   type = string
+  sensitive = true
 }
 
 locals {
@@ -59,5 +60,5 @@ data "aws_iam_policy_document" "allow_public_access" {
 
 output "bucket" {
   depends_on = [ aws_s3_bucket.s3-bucket ]
-  value = "https://${aws_s3_bucket.s3-bucket.bucket_domain_name}/index.html"
+  value = aws_s3_bucket.s3-bucket.bucket
 }

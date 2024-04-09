@@ -56,12 +56,16 @@ jobs:
           with:
             name: apps-build
         - uses: hashicorp/setup-terraform@v3
+          with:
+            terraform_wrapper: false
           
         - run: terraform -chdir=terraform init
+        - id: apply
+          run: terraform -chdir=terraform apply -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -auto-approve
   
         - name: Upload to S3
           run: |
-            aws s3 sync ./web/build s3://web-pipeline-vianaz
+            aws s3 sync ./web/build s3://${{ steps.apply.outputs.bucket }}
           env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
