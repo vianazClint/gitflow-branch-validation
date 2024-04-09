@@ -54,6 +54,7 @@ jobs:
         - uses: actions/checkout@v4
           with:
             path: ./terraform
+        - run: ls -R
         - uses: actions/download-artifact@v4
           with:
             name: apps-build
