@@ -61,7 +61,9 @@ jobs:
 
         - id: apply
           run: terraform -chdir=terraform apply -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -auto-approve
-  
+        
+        - run: echo "${{ steps.apply.outputs.stdout }}"
+        - run: echo "${{ steps.apply.outputs }}"
         - name: Upload to S3
           run: |
             aws s3 sync ./web/build s3://${{ steps.apply.outputs.stdout }}
