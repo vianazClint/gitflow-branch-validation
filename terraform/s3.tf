@@ -31,6 +31,18 @@ resource "aws_s3_bucket_public_access_block" "s3-bucket" {
   restrict_public_buckets = false
 }
 
+resource "aws_s3_bucket_website_configuration" "website" {
+  bucket = aws_s3_bucket.example.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+}
+
 resource "aws_s3_bucket_policy" "allow_public_access" {
   bucket = aws_s3_bucket.s3-bucket.id
   depends_on = [ aws_s3_bucket.s3-bucket ]
@@ -61,4 +73,8 @@ data "aws_iam_policy_document" "allow_public_access" {
 output "bucket" {
   depends_on = [ aws_s3_bucket.s3-bucket ]
   value = aws_s3_bucket.s3-bucket.bucket
+}
+output "deploy_url" {
+  depends_on = [ aws_s3_bucket.s3-bucket ]
+  value = aws_s3_bucket.aws_s3_bucket_website_configuration
 }
