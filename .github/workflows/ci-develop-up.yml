@@ -87,12 +87,17 @@ jobs:
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_DEFAULT_REGION: 'us-east-1'
 
-        - name: Comment PR
-          uses: thollander/actions-comment-pull-request@v2
+        - name: Comment PR with Deploy URL
+          uses: actions/github-script@v4
           with:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            message: |
-              Commit ${{ github.event.pull_request.commits[0].message }} has been deployed to ${{ matrix.app }} at ${{ steps.tf.outputs.DEPLOY_URL }} :rocket:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            script: |
+              github.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `Package ${{ matrix.app }} has been deployed to: ${{ steps.tf.outputs.DEPLOY_URL }} :rocket:`
+              })
 
       
   
