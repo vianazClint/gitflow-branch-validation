@@ -5,7 +5,7 @@ import type { PlopTypes } from "@turbo/gen";
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
   // A simple generator to add a new React component to the internal UI library
   plop.setGenerator("react-component", {
-    description: "S3 teste deploy",
+    description: "Adds a new react component",
     prompts: [
       {
         type: "input",
