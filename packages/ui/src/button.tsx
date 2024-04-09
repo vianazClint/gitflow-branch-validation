@@ -12,7 +12,7 @@ export const Button = ({ children, className, appName }: ButtonProps) => {
   return (
     <button
       className={className}
-      onClick={() => alert(`S3 deploy for ${appName} started!`)}
+      onClick={() => alert("Teste para ver se deploy funciona new")}
     >
       {children}
     </button>
