@@ -1,8 +1,8 @@
 name: CI / CD Develop PR Opened
 
 env:
-  artifact_name: terraform_state_${{ github.event.pull_request.id }}
-  bucket_name: pull_request_${{ github.event.pull_request.id }}
+  artifact_name: terraform-state-${{ github.event.pull_request.id }}
+  bucket_name: pull-request-${{ github.event.pull_request.id }}
 
 on:
   pull_request_target: 
