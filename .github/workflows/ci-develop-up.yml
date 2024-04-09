@@ -34,7 +34,6 @@ jobs:
   
   test:
     name: Test Unit
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -50,7 +49,7 @@ jobs:
     
   deploy-develop:
     name: Deploy PR
-    needs: test
+    needs: [build, test]
     environment:
       name: develop
       url: ${{ steps.tf.outputs.DEPLOY_URL }}
