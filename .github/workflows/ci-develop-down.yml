@@ -11,14 +11,29 @@ on:
 jobs:
   destroy-deploy:
     name: Destroy Deploy
+    strategy:
+      matrix:
+        app: [web, docs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend-config="key=${{ env.bucket_name}}.tfstate" -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+      - run: terraform init -backend-config="key=${{ env.bucket_name }}.tfstate" -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         working-directory: terraform
       - run: | 
-          terraform apply -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -var="bucket_name=${{ env.bucket_name }}" -auto-approve -destroy
+          terraform apply -var="bucket_name=${{ env.bucket_name }}-${{ matrix.app }}" -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -auto-approve -destroy
         working-directory: terraform
+      
+      - name: Comment PR infrastructure destroy
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.TOKEN }}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'S3 Bucket destroyed: ${{ env.bucket_name }}-${{ matrix.app }} :trash:'
+            })

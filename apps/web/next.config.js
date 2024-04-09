@@ -2,8 +2,5 @@
 module.exports = {
   transpilePackages: ["@repo/ui"],
   distDir: "build",
-  output: "export",
-  images: {
-    unoptimized: true,
-  }
+  output: process.env.NODE_ENV === "production" ? "export" : undefined,
 };
