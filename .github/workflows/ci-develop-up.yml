@@ -47,12 +47,12 @@ jobs:
       - name: Test
         run: echo "Test done"
     
-  deploy-develop:
+  deploy-develop-s3:
     name: Deploy PR
     needs: [build, test]
-    environment:
-      name: develop
-      url: ${{ steps.tf.outputs.DEPLOY_URL }}
+    strategy:
+      matrix:
+        app: [web, docs]
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
@@ -61,25 +61,40 @@ jobs:
             name: ${{ env.artifact_name }}
 
         - uses: hashicorp/setup-terraform@v3
-        - run: terraform init -backend-config="key=${{ env.bucket_name }}.tfstate" -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
+        - name: Terraform Init
+          run: terraform init -backend-config="key=${{ env.bucket_name }}.tfstate" -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           working-directory: terraform
-        - run: | 
-            terraform apply -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -var="bucket_name=${{ env.bucket_name }}" -auto-approve
+
+        - name: Terraform Apply
+          run: | 
+            terraform apply -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -var="bucket_name=${{ matrix.app }}-${{ env.bucket_name }}" -auto-approve
           working-directory: terraform
             
         - id: tf
+          name: Export Terraform Outputs
           working-directory: terraform
           run: |
             echo "BUCKET=$(terraform output -raw bucket)" >> $GITHUB_OUTPUT
             echo "DEPLOY_URL=$(terraform output -raw deploy_url)" >> $GITHUB_OUTPUT
         
-        - name: Upload to S3
+        - name: Upload ${{ matrix.app }} Build to S3
           run: |
-            aws s3 sync ./web/build s3://${{ steps.tf.outputs.BUCKET }}
+            aws s3 sync ./${{ matrix.app }}/build s3://${{ steps.tf.outputs.BUCKET }}
           env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_DEFAULT_REGION: 'us-east-1'
+
+        - name: Comment PR with Deploy Link ${{ matrix.app }}
+          run: node .github/actions/comment.mjs
+          env:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            issue_number: ${{ github.event.pull_request.number }}
+            repo: ${{ github.repository }}
+            owner: ${{ github.repository_owner }}
+            website_link: ${{ steps.tf.outputs.DEPLOY_URL }}
+            app: ${{ matrix.app }}
       
   
   # deploy-staging:
