@@ -51,12 +51,11 @@ jobs:
       url: https://web-pipeline-vianaz.s3.amazonaws.com/index.html
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v2
         - uses: actions/download-artifact@v4
           with:
             name: apps-build
         - name: Display structure of downloaded files
-          run: ls -R
+          run: ls -la
   
   # deploy-staging:
   #   if: ${{ github.event.pull_request.base.ref == 'main' }}
