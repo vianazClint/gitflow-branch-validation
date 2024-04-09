@@ -6,6 +6,10 @@ variable "secret_key" {
   sensitive = true
 }
 
+variable "bucket_name" {
+  type = string
+}
+
 locals {
   access_key = var.access_key
   secret_key = var.secret_key
@@ -18,6 +22,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "s3-bucket" {
+    bucket = var.bucket_name
     force_destroy = true
 }
 
@@ -76,6 +81,6 @@ output "bucket" {
 }
 output "deploy_url" {
   depends_on = [ aws_s3_bucket.s3-bucket ]
-  value = "https://${aws_s3_bucket_website_configuration.website.website_endpoint}"
+  value = "http://${aws_s3_bucket_website_configuration.website.website_endpoint}"
 }
 
