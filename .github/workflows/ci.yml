@@ -43,23 +43,20 @@ jobs:
       - name: Test
         run: echo "Test done"
     
-  # deploy-develop:
-  #   if: ${{ github.event.pull_request.base.ref == 'develop' }}
-  #   name: Deploy Develop
-  #   needs: test
-  #   environment:
-  #     name: develop
-  #     url: https://develop.example.com
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       packages: [backend, web, helper-web, service]
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #     - name: Deploy
-  #       run:
-  #         sleep 30s && echo "${{ matrix.packages }} deploy done"
+  deploy-develop:
+    name: Deploy Develop
+    needs: test
+    environment:
+      name: develop
+      url: https://web-pipeline-vianaz.s3.amazonaws.com/index.html
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v2
+        - uses: actions/download-artifact@v4
+          with:
+            name: apps-build
+        - name: Display structure of downloaded files
+          run: ls -R
   
   # deploy-staging:
   #   if: ${{ github.event.pull_request.base.ref == 'main' }}
