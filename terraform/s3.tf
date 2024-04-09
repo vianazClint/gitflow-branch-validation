@@ -76,5 +76,6 @@ output "bucket" {
 }
 output "deploy_url" {
   depends_on = [ aws_s3_bucket.s3-bucket ]
-  value = aws_s3_bucket.s3-bucket.aws_s3_bucket_website_configuration
+  value = aws_s3_bucket_website_configuration.website.website_domain
 }
+
