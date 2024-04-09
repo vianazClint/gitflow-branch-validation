@@ -87,15 +87,12 @@ jobs:
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_DEFAULT_REGION: 'us-east-1'
 
-        - name: Comment PR with Deploy Link ${{ matrix.app }}
-          run: node .github/actions/comment.mjs
-          env:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            issue_number: ${{ github.event.pull_request.number }}
-            repo: ${{ github.repository }}
-            owner: ${{ github.repository_owner }}
-            website_link: ${{ steps.tf.outputs.DEPLOY_URL }}
-            app: ${{ matrix.app }}
+        - name: Comment PR
+          uses: thollander/actions-comment-pull-request@v2
+          with:
+            message: |
+              Deployed ${{ matrix.app }} to [${{ steps.tf.outputs.DEPLOY_URL }}](${{ steps.tf.outputs.DEPLOY_URL }}) :rocket:
+
       
   
   # deploy-staging:
