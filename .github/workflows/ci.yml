@@ -25,6 +25,7 @@ jobs:
           name: apps-build
           path: |
             apps/**/build
+            !apps/**/node_modules
   
   test:
     name: Test Unit
