@@ -28,6 +28,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.artifact_name }}
+          retention-days: 2
           path: |
             apps/**/build
             !apps/**/node_modules
@@ -47,7 +48,7 @@ jobs:
       - name: Test
         run: echo "Test done"
     
-  deploy-develop-s3:
+  deploy-pr-s3:
     name: Deploy PR
     needs: [build, test]
     strategy:
@@ -96,7 +97,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `Package ${{ matrix.app }} has been deployed to: ${{ steps.tf.outputs.DEPLOY_URL }} :rocket:`
+                body: `Deployed (**${{matrix.app}}**) to: ${{ steps.tf.outputs.DEPLOY_URL }} :rocket:`
               })
 
       
