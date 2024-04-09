@@ -64,7 +64,7 @@ jobs:
             name: apps-build
 
         - uses: hashicorp/setup-terraform@v3
-        - run: terraform init
+        - run: terraform init -backend-config="key=${{ env.bucket_name }}.tfstate" -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           working-directory: terraform
         - run: | 
             terraform apply -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -var="bucket_name=${{ env.bucket_name }}" -auto-approve
@@ -83,12 +83,7 @@ jobs:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_DEFAULT_REGION: 'us-east-1'
-        
-        - name: Archive Terraform State
-          uses: actions/upload-artifact@v4
-          with:
-            name: ${{ env.artifact_name }}
-            path: terraform
+      
   
   # deploy-staging:
   #   if: ${{ github.event.pull_request.base.ref == 'main' }}

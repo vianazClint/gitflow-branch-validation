@@ -15,12 +15,8 @@ jobs:
     name: Destroy Deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.artifact_name }}
-
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init
+      - run: terraform init -backend-config="key=${{ env.bucket_name}}.tfstate" -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         working-directory: terraform
       - run: | 
           terraform apply -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -var="bucket_name=${{ env.bucket_name }}" -auto-approve -destroy

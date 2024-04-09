@@ -5,7 +5,6 @@ variable "secret_key" {
   type = string
   sensitive = true
 }
-
 variable "bucket_name" {
   type = string
 }
@@ -15,6 +14,12 @@ locals {
   secret_key = var.secret_key
 }
 
+terraform {
+  backend "s3" {
+    bucket = "vianaz-terraform-states"
+    region = "us-east-1"
+  }
+}
 provider "aws" {
     region = "us-east-1"
     access_key = local.access_key
