@@ -52,15 +52,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
-          with:
-            sparse-checkout: './terraform'
-        - run: ls -R
         - uses: actions/download-artifact@v4
           with:
             name: apps-build
         - uses: hashicorp/setup-terraform@v3
           
-        - run: terraform init
+        - run: terraform -chdir=terraform init
   
         - name: Upload to S3
           run: |
