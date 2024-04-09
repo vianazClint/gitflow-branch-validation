@@ -1,7 +1,8 @@
 name: CI / CD Develop PR Closed
 
 env:
-  artifact_name: terraform_state_${{ github.event.pull_request.id }}_${{ github.event.pull_request.created_at }}
+  artifact_name: terraform_state_${{ github.event.pull_request.id }}
+  bucket_name: pull_request_${{ github.event.pull_request.id }}
 
 on:
   pull_request_target: 
@@ -22,5 +23,5 @@ jobs:
       - run: terraform init
         working-directory: terraform
       - run: | 
-          terraform apply -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -var="bucket_name=${{ env.artifact_name }}" -auto-approve -destroy
+          terraform apply -var="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" -var="bucket_name=${{ env.bucket_name }}" -auto-approve -destroy
         working-directory: terraform
