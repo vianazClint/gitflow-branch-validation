@@ -97,7 +97,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `Deployed (**${{matrix.app}}**) to: ${{ steps.tf.outputs.DEPLOY_URL }} :rocket:`
+                body: `**Deployed (${{matrix.app}}):** ${{ steps.tf.outputs.DEPLOY_URL }} :rocket:`
               })
 
       
